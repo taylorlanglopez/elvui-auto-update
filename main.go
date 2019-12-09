@@ -15,6 +15,10 @@ import (
 
 var links []string
 
+// This is my interface path for example: "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface"
+// Requires \\ for backslash escaping
+var retailPath string = ""
+
 // This will get called for each HTML element found
 func processElement(index int, element *goquery.Selection) {
 	// See if the href attribute exists on the element
@@ -141,7 +145,7 @@ func main() {
 	document.Find("a").Each(processElement)
 	zipFragment := findZip(links)
 	possibleDL := baseURL + zipFragment
-	outputPath := "<YourRetailInterfacePathHere>"
+	outputPath := retailPath
 	resp, err := http.Get(possibleDL)
 	if resp.StatusCode != 200 {
 		fmt.Println("DL responded with an error, here is the link the script attempted to get ->", possibleDL)
