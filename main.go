@@ -15,9 +15,9 @@ import (
 
 var links []string
 
-// This is my interface path for example: "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface"
+// This is my interface path for example: "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\"
 // Requires \\ for backslash escaping
-var retailPath string = ""
+var retailPath string = "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\"
 
 // This will get called for each HTML element found
 func processElement(index int, element *goquery.Selection) {
