@@ -163,4 +163,5 @@ func main() {
 	fmt.Println("File created -> ", finalPath)
 	_, err = io.Copy(out, resp.Body)
 	Unzip(finalPath, outputPath+"AddOns\\")
+	fmt.Println("File paths used during unzip process -> ", finalPath, outputPath+"AddOns\\")
 }
