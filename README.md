@@ -10,4 +10,4 @@ This will only download and extract the specific file that is patterned as elvui
 
 Requires GO to be installed, and preferably WSL so that you could run the .sh script from a terminal and it will just execute the GO code. 
 
-If you modify the .sh file with the path of wherever your downloaded the repo to, you can place the .sh file on your desktop and exectue it quickly. This tool is mainly for my convieniece since I just use a MinGW64 term to execute it from my /home/ whenever I get the in game message "your elvui is out of date".
+If you modify the .sh file with the path of wherever your downloaded the repo to, you can place the .sh file on your desktop and exectue it quickly. This tool is mainly for my convieniece since I just use a MinGW64/gitBash term to execute it from my /home/ whenever I get the in game message "your elvui is out of date".
