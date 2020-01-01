@@ -80,6 +80,7 @@ func findZip(arr []string) string {
 			retSlice = append(retSlice, v)
 		}
 	}
+	fmt.Println("Possible .zip's -> ", retSlice)
 	return getNewElvUIZip(retSlice)
 }
 
@@ -184,4 +185,9 @@ func main() {
 	_, err = io.Copy(out, resp.Body)
 	Unzip(finalPath, outputPath+"AddOns\\")
 	fmt.Println("File paths used during unzip process -> ", finalPath, outputPath+"AddOns\\")
+	fmt.Println("Cleanig up zip at -> ", finalPath)
+	delErr := os.Remove(finalPath)
+	if delErr != nil {
+		fmt.Println("Could not delete file at -> ", finalPath)
+	}
 }
