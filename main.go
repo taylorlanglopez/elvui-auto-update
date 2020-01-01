@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -53,18 +54,33 @@ func ext(url string, key byte) string {
 	return ""
 }
 
+func getNewElvUIZip(arr []string) string {
+	// Match this -> "elvui-11.27.zip"
+	rExpObj, err := regexp.Compile("(elvui)-.*[.].*[.zip]")
+	if err != nil {
+		panic(err)
+	}
+	for _, value := range arr {
+		if rExpObj.Match([]byte(value)) {
+			return value
+		}
+	}
+	return ""
+}
+
 func findZip(arr []string) string {
 	if len(arr) < 1 {
 		return ""
 	}
 
+	retSlice := []string{}
 	for _, v := range arr {
 		p := ext(v, '.')
 		if p == ".zip" {
-			return v
+			retSlice = append(retSlice, v)
 		}
 	}
-	return ""
+	return getNewElvUIZip(retSlice)
 }
 
 // Unzip will decompress a zip archive, moving all files and folders
@@ -144,6 +160,10 @@ func main() {
 	// defined earlier
 	document.Find("a").Each(processElement)
 	zipFragment := findZip(links)
+	if zipFragment == "" {
+		fmt.Println("ElvUI Zip pattern was not found, exiting.")
+		os.Exit(1)
+	}
 	possibleDL := baseURL + zipFragment
 	outputPath := retailPath
 	resp, err := http.Get(possibleDL)
