@@ -146,26 +146,32 @@ func Unzip(src string, dest string) ([]string, error) {
 func checkDiffVersion(s string) bool {
 	currentElvUITOC := retailPath + "AddOns\\ElvUI\\ElvUI.toc"
 	outFile, err := os.Open(currentElvUITOC)
+
 	if err != nil {
 		fmt.Println("File not found at -> ", currentElvUITOC)
 		return false
 	}
+
 	scanLines := bufio.NewScanner(outFile)
 	var currentVersion string
+
 	for scanLines.Scan() {
 		if strings.Contains(scanLines.Text(), "Version") {
 			currentVersion = scanLines.Text()
 			break
 		}
 	}
+
 	stringSlice := strings.Split(currentVersion, " ")
 	verNum := stringSlice[len(stringSlice)-1]
 	stringSlice = strings.Split(s, "-")
 	installedNum := stringSlice[len(stringSlice)-1]
 	finalInstalledNum := strings.Replace(installedNum, ".zip", "", 1)
+
 	if finalInstalledNum == verNum {
 		return false
 	}
+
 	return true
 }
 
