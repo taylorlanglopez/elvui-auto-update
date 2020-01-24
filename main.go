@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"bufio"
 	"fmt"
 	"io"
 	"log"
@@ -142,12 +143,40 @@ func Unzip(src string, dest string) ([]string, error) {
 	return filenames, nil
 }
 
+func checkDiffVersion(s string) bool {
+	currentElvUITOC := retailPath + "AddOns\\ElvUI\\ElvUI.toc"
+	outFile, err := os.Open(currentElvUITOC)
+	if err != nil {
+		fmt.Println("File not found at -> ", currentElvUITOC)
+		return false
+	}
+	scanLines := bufio.NewScanner(outFile)
+	var currentVersion string
+	for scanLines.Scan() {
+		if strings.Contains(scanLines.Text(), "Version") {
+			currentVersion = scanLines.Text()
+			break
+		}
+	}
+	stringSlice := strings.Split(currentVersion, " ")
+	verNum := stringSlice[len(stringSlice)-1]
+	stringSlice = strings.Split(s, "-")
+	installedNum := stringSlice[len(stringSlice)-1]
+	finalInstalledNum := strings.Replace(installedNum, ".zip", "", 1)
+	if finalInstalledNum == verNum {
+		return false
+	}
+	return true
+}
+
 func main() {
 	// Make HTTP request
 	baseURL := "https://www.tukui.org"
 	response, err := http.Get("https://www.tukui.org/download.php?ui=elvui")
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		fmt.Println("Retrieved response from tukui.org.")
 	}
 	defer response.Body.Close()
 
@@ -163,8 +192,15 @@ func main() {
 	zipFragment := findZip(links)
 	if zipFragment == "" {
 		fmt.Println("ElvUI Zip pattern was not found, exiting.")
-		os.Exit(1)
+		return
 	}
+	fmt.Println("Zip found successfully -> ", zipFragment)
+	fmt.Println("Checking version diff before downloading new ElvUI package...")
+	if checkDiffVersion(zipFragment) == false {
+		fmt.Println("ElvUI is already up to date, exiting")
+		return
+	}
+	fmt.Println("ElvUI is correctly out of date, continuing")
 	possibleDL := baseURL + zipFragment
 	outputPath := retailPath
 	resp, err := http.Get(possibleDL)
@@ -173,8 +209,9 @@ func main() {
 	}
 	if err != nil {
 		panic(err)
+	} else {
+		fmt.Println("File downloaded from URL -> ", resp.Request.URL.String())
 	}
-	fmt.Println(resp.Request.URL.String())
 	filename := extFileName(resp.Request.URL.String(), '/')
 	finalPath := outputPath + filename
 	out, e := os.Create(finalPath)
@@ -188,6 +225,6 @@ func main() {
 	fmt.Println("Cleanig up zip at -> ", finalPath)
 	delErr := os.Remove(finalPath)
 	if delErr != nil {
-		fmt.Println("Could not delete file at -> ", finalPath)
+		fmt.Println("Could not delete file at this requires manual cleanup -> ", finalPath)
 	}
 }
